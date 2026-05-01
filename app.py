@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 import pandas as pd
 import plotly.express as px
+import gdown
+import os
 
 # Page settings
 st.set_page_config(page_title="Potato AI", page_icon="🥔", layout="wide")
@@ -43,10 +45,11 @@ st.markdown('<div class="subtitle">AI-powered leaf disease detection system</div
 st.write("")
 
 # Load model
-@st.cache_resource
 def load_model():
+    if not os.path.exists("potato_model.h5"):
+        url = "https://drive.google.com/file/d/1NBsnGbVQp8yNgemiWJfjSu-kccR4z5uC/view?usp=drive_link"
+        gdown.download(url, "potato_model.h5", quiet=False)
     return tf.keras.models.load_model("potato_model.h5", compile=False)
-
 model = load_model()
 
 class_names = ["Early Blight", "Late Blight", "Healthy"]
