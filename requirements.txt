@@ -4,5 +4,6 @@ numpy
 pillow
 plotly
 pandas
+plotly
+gdown
 
-1. pip install streamlit tensorflow pillow numpy
