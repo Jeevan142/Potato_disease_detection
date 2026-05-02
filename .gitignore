@@ -1,6 +1,5 @@
+model/
 *.h5
-*.pkl
-*.pt
-dataset/
 __pycache__/
-venv/
+*.pyc
+

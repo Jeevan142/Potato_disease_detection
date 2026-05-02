@@ -1,8 +1,5 @@
 streamlit
-tensorflow==2.13
+tensorflow
 numpy
 pillow
 plotly
-pandas
-
-1. pip install streamlit tensorflow pillow numpy

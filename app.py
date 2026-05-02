@@ -1,139 +1,126 @@
 import streamlit as st
-import tensorflow as tf
-import numpy as np
-from PIL import Image
-import pandas as pd
-import plotly.express as px
 
-# Page settings
+# Page Config
 st.set_page_config(page_title="Potato AI", page_icon="🥔", layout="wide")
 
-# Custom CSS
+# ------------------- CSS -------------------
 st.markdown("""
 <style>
-body {
+.stApp {
+    background: linear-gradient(to right, #e6ffe6, #f0fff0);
+}
+
+.hero {
     background: linear-gradient(to right, #56ab2f, #a8e063);
-}
-.block-container {
-    padding-top: 2rem;
-}
-.card {
-    background-color: white;
-    padding: 20px;
+    padding: 50px;
     border-radius: 20px;
-    box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
-}
-.title {
     text-align: center;
-    font-size: 45px;
-    font-weight: bold;
+    color: white;
 }
-.subtitle {
+
+.hero h1 {
+    font-size: 50px;
+}
+
+.hero p {
+    font-size: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
     text-align: center;
-    font-size: 18px;
+}
+
+.footer {
+    text-align: center;
     color: gray;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown('<div class="title">🥔 Potato Disease Detection</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">AI-powered leaf disease detection system</div>', unsafe_allow_html=True)
+# ------------------- HERO SECTION -------------------
+st.markdown("""
+<div class="hero">
+    <h1>🥔 Smart Potato Disease Detection</h1>
+    <p>AI-powered system to detect Early Blight, Late Blight & Healthy crops</p>
+</div>
+""", unsafe_allow_html=True)
 
 st.write("")
 
-# Load model
-@st.cache_resource
-def load_model():
-    return tf.keras.models.load_model("potato_model.h5", compile=False)
+# ------------------- BANNER IMAGE -------------------
+st.image("assets/banner.png", use_container_width=True)
 
-model = load_model()
+st.write("")
 
-class_names = ["Early Blight", "Late Blight", "Healthy"]
-disease_info = {
-    "Early Blight": {
-        "desc": "Fungal disease causing brown spots with concentric rings.",
-        "solution": "Remove infected leaves, use fungicide, avoid overhead watering."
-    },
-    "Late Blight": {
-        "desc": "Serious disease causing dark lesions and rapid decay.",
-        "solution": "Apply fungicides immediately, remove infected plants, ensure good airflow."
-    },
-    "Healthy": {
-        "desc": "No disease detected. Plant is healthy.",
-        "solution": "Maintain proper care, watering, and sunlight."
-    }
-}
-# Layout
-col1, col2 = st.columns(2)
+# ------------------- IMAGE GROUP -------------------
+st.markdown("## 🌿 Understanding Potato Leaf Conditions")
+
+
+
+
+
+# ------------------- INFO SECTION -------------------
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("### 📤 Upload Image")
-    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
-
-    if uploaded_file:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image", use_container_width=True)
+    st.success("✅ Healthy Leaf")
+    st.write("Green, fresh, no spots. Plant is healthy.")
 
 with col2:
-    st.markdown("### 🧠 Prediction")
+    st.warning("🦠 Early Blight")
+    st.write("Brown spots with concentric rings.")
 
-    if uploaded_file:
-        img = image.resize((224, 224))
-        img_array = np.array(img) / 255.0   # ✅ FIXED
-        img_array = np.expand_dims(img_array, axis=0)
+with col3:
+    st.error("⚠️ Late Blight")
+    st.write("Dark lesions, spreads very fast.")
 
-        prediction = model.predict(img_array)
-        score = tf.nn.softmax(prediction[0])
+st.write("")
 
-        predicted_class = class_names[np.argmax(score)]
-        confidence = np.max(score) * 100
+# ------------------- FEATURES -------------------
+st.markdown("## 🚀 Features")
 
-        # Create data for chart
-        chart_data = {
-         "Disease": class_names,
-        "Confidence": [float(s * 100) for s in score]
-        }
+col1, col2, col3 = st.columns(3)
 
-        fig = px.bar(
-       chart_data,
-       x="Disease",
-       y="Confidence",
-       color="Disease",
-       text="Confidence",
-       title="Prediction Probability"
-       )
+with col1:
+    st.markdown("""
+    <div class="card">
+    📸 <h3>Upload Image</h3>
+    Detect disease instantly from leaf image
+    </div>
+    """, unsafe_allow_html=True)
 
-        fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
-        fig.update_layout(yaxis_range=[0,100])
+with col2:
+    st.markdown("""
+    <div class="card">
+    🧠 <h3>AI Prediction</h3>
+    Deep learning powered classification
+    </div>
+    """, unsafe_allow_html=True)
 
-        st.plotly_chart(fig, use_container_width=True)
+with col3:
+    st.markdown("""
+    <div class="card">
+    💊 <h3>Solutions</h3>
+    Get treatment suggestions instantly
+    </div>
+    """, unsafe_allow_html=True)
 
-        st.success(f"🌿 {predicted_class}")
-        st.progress(int(confidence))
-        st.write(f"Confidence: {confidence:.2f}%")
-        st.markdown("### 🌿 Disease Information")
+st.write("")
 
-        st.info(f"🧾 Description: {disease_info[predicted_class]['desc']}")
+# ------------------- HOW TO USE -------------------
+st.markdown("## 📌 How to Use")
 
-        if predicted_class == "Healthy":
-         st.success(f"✅ Solution: {disease_info[predicted_class]['solution']}")
-        else:
-         st.warning(f"💊 Solution: {disease_info[predicted_class]['solution']}")
+st.info("""
+1. Go to the **Prediction page** from sidebar 👉  
+2. Upload a potato leaf image 📤  
+3. Get instant AI prediction 🧠  
+4. Follow suggested treatment 💊  
+""")
 
-        # Show all probabilities
-        st.markdown("### 📊 All Predictions")
-        for i, cls in enumerate(class_names):
-            st.write(f"{cls}: {score[i]*100:.2f}%")
-
-        # Disease info
-        if predicted_class == "Early Blight":
-            st.warning("🦠 Early Blight detected. Use fungicides and remove infected leaves.")
-        elif predicted_class == "Late Blight":
-            st.error("⚠️ Late Blight detected. Immediate treatment required.")
-        else:
-            st.success("✅ Plant is Healthy!")
-
-# Footer
+# ------------------- FOOTER -------------------
 st.markdown("---")
-st.markdown("Made with ❤️ using Streamlit | AI Project")
+st.markdown('<div class="footer">🌱 Built for Smart Agriculture | AI Project</div>', unsafe_allow_html=True)
