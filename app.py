@@ -1,4 +1,11 @@
 import streamlit as st
+import tensorflow as tf
+import numpy as np
+from PIL import Image
+import pandas as pd
+import plotly.express as px
+import gdown
+import os
 
 # Page Config
 st.set_page_config(page_title="Potato AI", page_icon="🥔", layout="wide")
@@ -56,14 +63,19 @@ st.image("assets/banner.png", use_container_width=True)
 
 st.write("")
 
-# ------------------- IMAGE GROUP -------------------
-st.markdown("## 🌿 Understanding Potato Leaf Conditions")
+# ------------------- LOAD MODEL -------------------
+@st.cache_resource
+def load_model():
+    if not os.path.exists("potato_model.h5"):
+        url = "https://drive.google.com/uc?id=1NBsnGbVQp8yNgemiWJfjSu-kccR4z5uC"
+        gdown.download(url, "potato_model.h5", quiet=False)
+    return tf.keras.models.load_model("potato_model.h5", compile=False)
 
-
-
-
+model = load_model()
 
 # ------------------- INFO SECTION -------------------
+st.markdown("## 🌿 Understanding Potato Leaf Conditions")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
